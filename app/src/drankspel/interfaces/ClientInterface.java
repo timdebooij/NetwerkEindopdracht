@@ -1,18 +1,18 @@
 package drankspel.interfaces;
 
-import com.sun.xml.internal.messaging.saaj.soap.JpegDataContentHandler;
 import drankspel.game.Card;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class ClientInterface {
 
     String playerID;
     String name;
     ArrayList<Card> cards;
-    ArrayList<String> players;
+    ArrayList<ClientInterface> players;
 
     JPanel playersPanel;
     JPanel cardsPanel;
@@ -79,8 +79,13 @@ public class ClientInterface {
     }
 
     public ArrayList<Card> chooseCard(){
-        System.out.println(cards.get(0).getRule());
-        cards.remove(0);
+        Scanner reader = new Scanner(System.in);
+
+        //read data, input should be between 0 and the amount of cards -1
+        System.out.println("Choose card : ");
+        int n = reader.nextInt();
+        System.out.println(name + " has the rule: " + cards.get(n).getRule());
+        cards.remove(n);
         return cards;
     }
 
@@ -116,11 +121,11 @@ public class ClientInterface {
         this.cards = cards;
     }
 
-    public ArrayList<String> getPlayers() {
+    public ArrayList<ClientInterface> getPlayers() {
         return players;
     }
 
-    public void setPlayers(ArrayList<String> players) {
+    public void setPlayers(ArrayList<ClientInterface> players) {
         this.players = players;
     }
 

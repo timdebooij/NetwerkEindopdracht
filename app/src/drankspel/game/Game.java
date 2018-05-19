@@ -13,11 +13,11 @@ public class Game {
     private ArrayList<ClientInterface> player;
     private int playerNumber = 1;
 
-    public Game(ClientInterface client) {
+    public Game(ArrayList<ClientInterface> clients) {
 
         cards = new ArrayList<>();
         player = new ArrayList<>();
-        player.add(client);
+        player.addAll(clients);
 
 
         Stack stack = new Stack(1);
@@ -29,40 +29,34 @@ public class Game {
 
     }
 
+
     /**
      * the main method of the game
      * all game logic will be in this method
      */
     public void playGame(){
-        Scanner reader = new Scanner(System.in);
+
         while(!cards.isEmpty()){
             //sent cards to selected player
             ArrayList<Card> sentCards = selectFiveCards();
-            player.get(0).setCards(sentCards);
+            player.get(playerNumber).setCards(sentCards);
             //System.out.println(sentCards);
 
-            //read data, input should be between 0 and the amount of cards -1
-//            System.out.println("Choose card : ");
-//            int n = reader.nextInt();
-
-            //show rule and remove used card
-            //System.out.println(sentCards.get(n).getRule());
-            //sentCards.remove(n);
             //get four back
-            returnFourCards(player.get(0).chooseCard());
+            returnFourCards(player.get(playerNumber).chooseCard());
             //go to next player
             selectNextPlayer();
 
         }
-        reader.close();
+
     }
 
     /**
      * select next player to get cards
      */
     public void selectNextPlayer(){
-        if(playerNumber == player.size())
-            playerNumber = 1;
+        if(playerNumber == player.size()-1)
+            playerNumber = 0;
         else
             playerNumber++;
     }
@@ -105,4 +99,11 @@ public class Game {
         this.cards = cards;
     }
 
+    public ArrayList<ClientInterface> getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(ArrayList<ClientInterface> player) {
+        this.player = player;
+    }
 }
