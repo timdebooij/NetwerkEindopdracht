@@ -1,4 +1,4 @@
-package game;
+package drankspel.game;
 
 
 import java.util.ArrayList;
