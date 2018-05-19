@@ -2,10 +2,10 @@ package drankspel.game;
 
 public class Card {
     int number;
-    int type;
+    String type;
     String rule;
 
-    public Card(int number, int type, String rule) {
+    public Card(int number, String type, String rule) {
         this.number = number;
         this.type = type;
         this.rule = rule;
@@ -19,11 +19,11 @@ public class Card {
         this.number = number;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 

@@ -7,6 +7,7 @@ public class Stack {
 
     private ArrayList<drankspel.game.Card> cards;
     private ArrayList<String> rules;
+    private ArrayList<String> types;
 
     /**
      * constructor that creates a stack filled with cards
@@ -15,7 +16,9 @@ public class Stack {
     public Stack(int stacks) {
         cards = new ArrayList<>();
         rules = new ArrayList<>();
+        types = new ArrayList<>();
         fillRules();
+        fillTypes();
         switch (stacks){
             case 1: createHalfStack();
                     break;
@@ -47,6 +50,13 @@ public class Stack {
         rules.add("change direction");
     }
 
+    public void fillTypes(){
+        types.add("Klaver");
+        types.add("Ruiten");
+        types.add("Harten");
+        types.add("Schoppen");
+    }
+
     public void createHalfStack(){
         createCards(1);
     }
@@ -68,7 +78,8 @@ public class Stack {
         for(int i = 2; i<=14; i++){
             String rule = rules.get(i-2);
             for(int t = 0; t<=size; t++){
-                cards.add(new drankspel.game.Card(i, t, rule));
+                String type = types.get(t);
+                cards.add(new drankspel.game.Card(i, type, rule));
             }
         }
     }
