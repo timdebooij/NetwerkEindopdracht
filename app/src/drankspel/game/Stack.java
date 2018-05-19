@@ -8,6 +8,10 @@ public class Stack {
     private ArrayList<drankspel.game.Card> cards;
     private ArrayList<String> rules;
 
+    /**
+     * constructor that creates a stack filled with cards
+     * @param stacks is the amount of cards in the game (must be between 1 and 3)
+     */
     public Stack(int stacks) {
         cards = new ArrayList<>();
         rules = new ArrayList<>();
@@ -23,6 +27,9 @@ public class Stack {
         Collections.shuffle(cards);
     }
 
+    /**
+     * Fills the arraylist rules with the actaul game rules
+     */
     public void fillRules(){
         rules.add("take four sips");
         rules.add("give four sips away");
