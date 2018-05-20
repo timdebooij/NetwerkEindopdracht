@@ -58,16 +58,16 @@ public class Stack {
     }
 
     public void createHalfStack(){
-        createCards(1);
+        //createCards(1);
+        createCard(26);
     }
 
     public void createStack(){
-        createCards(3);
+        createCard(52);
     }
 
     public void createDoubleStack() {
-        createCards(3);
-        createCards(3);
+        createCard(104);
     }
 
     /**
@@ -81,6 +81,29 @@ public class Stack {
                 String type = types.get(t);
                 cards.add(new drankspel.game.Card(i, type, rule));
             }
+        }
+    }
+
+    int number = 2;
+    int typeCard = 0;
+    public int createCard(int amount){
+        if(amount == 0){
+            return 0;
+        }
+        else {
+            String rule = rules.get(number - 2);
+            String type = types.get(typeCard);
+            cards.add(new Card(number, type, rule));
+            if(number == 14) {
+                number = 2;
+                if (typeCard == 3)
+                    typeCard = 0;
+                else
+                    typeCard++;
+            }
+            else number++;
+
+            return createCard(amount - 1);
         }
     }
 
