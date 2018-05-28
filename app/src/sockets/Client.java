@@ -1,6 +1,7 @@
 package sockets;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -22,6 +23,7 @@ public class Client {
     private PrintWriter out;
     private Timer timer;
     private JFrame frame = new JFrame("Capitalize Client");
+    private Boolean ready;
     private JTextField dataField = new JTextField(40);
     private static JTextArea messageArea = new JTextArea(8, 60);
 
@@ -38,6 +40,8 @@ public class Client {
         messageArea.setEditable(false);
         frame.getContentPane().add(dataField, "North");
         frame.getContentPane().add(new JScrollPane(messageArea), "Center");
+        frame.getContentPane().add(new UpdatePanel(), BorderLayout.SOUTH);
+
 
         // Add Listeners
         dataField.addActionListener(new ActionListener() {
@@ -74,6 +78,24 @@ public class Client {
      * protocol says that the server sends three lines of text to the
      * client immediately after establishing a connection.
      */
+
+    public class UpdatePanel extends JPanel {
+
+        public UpdatePanel(){
+
+            JButton readyButton = new JButton();
+            add(readyButton);
+            readyButton.addActionListener(e -> {
+                ready = true;
+                remove(readyButton);
+            });
+
+            for (int  index = 0; index < 5; index++){
+                add(new JButton("Button"));
+            }
+        }
+    }
+
     public void connectToServer() throws IOException {
 
         // Get the server address from a dialog box.
@@ -83,6 +105,13 @@ public class Client {
                 "Welcome to the Capitalization Program",
                 JOptionPane.QUESTION_MESSAGE);
 
+        // Get the user to input username from a dialog box.
+        String  Name = JOptionPane.showInputDialog(
+                frame,
+                "Choose a screen name:",
+                "Screen name selection",
+                JOptionPane.PLAIN_MESSAGE);
+
         // Make connection and initialize streams
         Socket socket = new Socket(serverAddress, 9898);
         in = new BufferedReader(
@@ -91,7 +120,15 @@ public class Client {
 
         while(true){
             String line = in.readLine();
-            messageArea.append(line + "\n");
+            if (line.startsWith("SUBMITNAME")) {
+                out.println(Name);
+            } else if (line.startsWith("NAMEACCEPTED")) {
+                dataField.setEditable(true);
+            } else if (line.startsWith("READY")){
+
+            } else if (line.startsWith("MESSAGE")) {
+                messageArea.append(line.substring(8) + "\n");
+            }
         }
 
         // Consume the initial welcoming messages from the server
