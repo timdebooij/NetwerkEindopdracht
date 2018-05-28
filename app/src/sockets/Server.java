@@ -27,6 +27,7 @@ import java.net.Socket;
  * dependent.  If you ran it from a console window with the "java"
  * interpreter, Ctrl+C generally will shut it down.
  */
+
 public class Server {
 
     private static ArrayList<PrintWriter> writers = new ArrayList<>();

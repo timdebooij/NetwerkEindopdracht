@@ -23,7 +23,7 @@ public class Client {
     private PrintWriter out;
     private Timer timer;
     private JFrame frame = new JFrame("Capitalize Client");
-    private Boolean ready;
+    private String ready;
     private JTextField dataField = new JTextField(40);
     private static JTextArea messageArea = new JTextArea(8, 60);
 
@@ -86,13 +86,13 @@ public class Client {
             JButton readyButton = new JButton();
             add(readyButton);
             readyButton.addActionListener(e -> {
-                ready = true;
+                ready = "ready";
                 remove(readyButton);
             });
 
-            for (int  index = 0; index < 5; index++){
-                add(new JButton("Button"));
-            }
+            //for (int  index = 0; index < 5; index++){
+            //    add(new JButton("Button"));
+            //}
         }
     }
 
@@ -106,7 +106,7 @@ public class Client {
                 JOptionPane.QUESTION_MESSAGE);
 
         // Get the user to input username from a dialog box.
-        String  Name = JOptionPane.showInputDialog(
+        String  name = JOptionPane.showInputDialog(
                 frame,
                 "Choose a screen name:",
                 "Screen name selection",
@@ -121,11 +121,11 @@ public class Client {
         while(true){
             String line = in.readLine();
             if (line.startsWith("SUBMITNAME")) {
-                out.println(Name);
+                out.println(name);
             } else if (line.startsWith("NAMEACCEPTED")) {
                 dataField.setEditable(true);
             } else if (line.startsWith("READY")){
-
+                out.println(ready);
             } else if (line.startsWith("MESSAGE")) {
                 messageArea.append(line.substring(8) + "\n");
             }
