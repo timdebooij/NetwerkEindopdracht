@@ -120,10 +120,9 @@ public class Server {
                     }
                     String line = input.toUpperCase();
 
-                    sendMessages(line);
-
-                    //out.println(line);
-                    System.out.println(line);
+                    for(Capitalizer cap : caps){
+                        cap.print(line);
+                    }
                 }
             } catch (IOException e) {
                 log("Error handling client# " + clientNumber + ": " + e);

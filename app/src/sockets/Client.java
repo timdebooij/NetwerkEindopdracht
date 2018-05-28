@@ -51,17 +51,18 @@ public class Client {
              */
             public void actionPerformed(ActionEvent e) {
                 out.println(dataField.getText());
-                String response;
-                try {
-                    response = in.readLine();
-                    if (response == null || response.equals("")) {
-                        System.exit(0);
-                    }
-                } catch (IOException ex) {
-                    response = "Error: " + ex;
-                }
-                messageArea.append(response + "\n");
-                dataField.selectAll();
+                dataField.setText("");
+                //String response;
+                //try {
+                //    response = in.readLine();
+                //    if (response == null || response.equals("")) {
+                //        System.exit(0);
+                //    }
+                //} catch (IOException ex) {
+                //    response = "Error: " + ex;
+                //}
+                //messageArea.append(response + "\n");
+                //dataField.selectAll();
             }
         });
     }
@@ -88,17 +89,21 @@ public class Client {
                 new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
 
+        while(true){
+            String line = in.readLine();
+            messageArea.append(line + "\n");
+        }
 
         // Consume the initial welcoming messages from the server
-        for (int i = 0; i < 3; i++) {
-            messageArea.append(in.readLine() + "\n");
-        }
+        //for (int i = 0; i < 3; i++) {
+        //    messageArea.append(in.readLine() + "\n");
+        //}
     }
 
-    public static void update() throws IOException {
-        String message = in.readLine();
-        messageArea.append(message + "\n");
-    }
+    //public static void update() throws IOException {
+    //    String message = in.readLine();
+    //    messageArea.append(message + "\n");
+    //}
 
     /**
      * Runs the client application.
