@@ -10,23 +10,17 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
-/**
- * A simple Swing-based client for the capitalization server.
- * It has a main frame window with a text field for entering
- * strings and a textarea to see the results of capitalizing
- * them.
- */
 public class Client {
 
 
     private static BufferedReader in;
     private PrintWriter out;
-    private Timer timer;
-    private JFrame frame = new JFrame("Capitalize Client");
-    private String ready;
+    private JFrame frame = new JFrame("Game Client");
+    private JPanel panel = new JPanel();
     private JTextField dataField = new JTextField(40);
     private static JTextArea messageArea = new JTextArea(8, 60);
     private ArrayList<Card> cards = new ArrayList<>();
+    private static JButton button;
 
     /**
      * Constructs the client by laying out the GUI and registering a
@@ -35,69 +29,27 @@ public class Client {
      */
     public Client(){
 
-
-
         // Layout GUI
         messageArea.setEditable(false);
-        frame.getContentPane().add(dataField, "North");
-        frame.getContentPane().add(new JScrollPane(messageArea), "Center");
-        frame.getContentPane().add(new UpdatePanel(), BorderLayout.SOUTH);
+        frame.getContentPane().add(dataField, "Center");
+        frame.getContentPane().add(new JScrollPane(messageArea), "North");
+        frame.getContentPane().add(panel, "South");
 
+        // Add Buttons to panel
+        for(int index = 0; index < 5; index++){
+            panel.add(button = new JButton());
+        }
 
         // Add Listeners
         dataField.addActionListener(new ActionListener() {
-            /**
-             * Responds to pressing the enter key in the textfield
-             * by sending the contents of the text field to the
-             * server and displaying the response from the server
-             * in the text area.  If the response is "." we exit
-             * the whole application, which closes all sockets,
-             * streams and windows.
-             */
             public void actionPerformed(ActionEvent e) {
                 out.println(dataField.getText());
                 dataField.setText("");
-                //String response;
-                //try {
-                //    response = in.readLine();
-                //    if (response == null || response.equals("")) {
-                //        System.exit(0);
-                //    }
-                //} catch (IOException ex) {
-                //    response = "Error: " + ex;
-                //}
-                //messageArea.append(response + "\n");
-                //dataField.selectAll();
             }
         });
     }
 
-    /**
-     * Implements the connection logic by prompting the end user for
-     * the server's IP address, connecting, setting up streams, and
-     * consuming the welcome messages from the server.  The Capitalizer
-     * protocol says that the server sends three lines of text to the
-     * client immediately after establishing a connection.
-     */
-
-    public class UpdatePanel extends JPanel {
-
-        public UpdatePanel(){
-
-            JButton readyButton = new JButton();
-            add(readyButton);
-            readyButton.addActionListener(e -> {
-                ready = "ready";
-                remove(readyButton);
-            });
-
-            //for (int  index = 0; index < 5; index++){
-            //    add(new JButton("Button"));
-            //}
-        }
-    }
-
-    public void connectToServer() throws IOException, ClassNotFoundException {
+    public void connectToServer() throws IOException {
 
         // Get the server address from a dialog box.
         String serverAddress = JOptionPane.showInputDialog(
@@ -151,9 +103,17 @@ public class Client {
                 }
             } catch (EOFException e) {
 
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
         }
+
     }
+
+    //public static void update() throws IOException {
+    //    String message = in.readLine();
+    //    messageArea.append(message + "\n");
+    //}
 
     /**
      * Runs the client application.
