@@ -31,9 +31,6 @@ import java.util.Iterator;
 
 public class Server {
 
-    private static ArrayList<PrintWriter> writers = new ArrayList<>();
-    private static ArrayList<Capitalizer> caps = new ArrayList<>();
-
     private static ArrayList<ObjectOutputStream> outputStreams = new ArrayList<>();
     private static ArrayList<ObjectInputStream> inputStreams = new ArrayList<>();
     private static int playersJoined = 0;
@@ -49,15 +46,14 @@ public class Server {
      * messages.  It is certainly not necessary to do this.
      */
     public static void main(String[] args) throws Exception {
-        System.out.println("The capitalization server is running.");
+        System.out.println("The Game server is running.");
         int clientNumber = 0;
         ServerSocket listener = new ServerSocket(9898);
         try {
             while (true) {
-                Capitalizer cap = new Capitalizer(listener.accept(), clientNumber++);
-                cap.start();
-                //caps.add(cap);
-                System.out.println(caps.size());
+                Player player = new Player(listener.accept(), clientNumber++);
+                player.start();
+
                 if(playersJoined == 2){
                     break;
                 }
@@ -82,6 +78,7 @@ public class Server {
     }
 
     public static ArrayList<Card> getCards(){
+        game.shuffleCards();
         System.out.println(game.getCards().size());
         ArrayList<Card> newCards = game.selectFiveCards();
         currentCards = newCards;
@@ -91,6 +88,7 @@ public class Server {
     public static void sendNewCards() throws IOException {
         if(game.gameStillGoing()) {
             outputStreams.get(selectedPlayer).writeObject(getCards());
+            System.out.println("new cards send");
         }
         else{
             System.out.println("game finished");
@@ -100,7 +98,7 @@ public class Server {
     public static void sendMessages(String message) throws IOException {
         for(int i = 0; i <= outputStreams.size()-1; i++){
             if(!(i==selectedPlayer))
-                System.out.println("message send");
+                //System.out.println("message send");
             outputStreams.get(i).writeObject(message);
         }
     }
@@ -111,12 +109,12 @@ public class Server {
      * socket.  The client terminates the dialogue by sending a single line
      * containing only a period.
      */
-    private static class Capitalizer extends Thread {
+    private static class Player extends Thread {
         private Socket socket;
         private int clientNumber;
         private PrintWriter out;
 
-        public Capitalizer(Socket socket, int clientNumber) {
+        public Player(Socket socket, int clientNumber) {
             this.socket = socket;
             this.clientNumber = clientNumber;
             log("New connection with client# " + clientNumber + " at " + socket);
@@ -173,7 +171,6 @@ public class Server {
                             //System.out.println("returned cards");
                             nextPlayer();
                             sendNewCards();
-                            System.out.println("new cards send");
                         }
 
                         if (input == null || input.equals(".")) {

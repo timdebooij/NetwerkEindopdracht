@@ -3,7 +3,6 @@ package sockets;
 import drankspel.game.Card;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -90,6 +89,8 @@ public class Client {
                     } else {
                         System.out.println("cards received");
                         cards = (ArrayList<Card>) input;
+                        //Collections.sort(cards);
+                        //Collections.sort(cards, Card.cardComparator);
                         System.out.println(cards.toString());
 
                         messageArea.append(cards.get(0).toString() + "\n");

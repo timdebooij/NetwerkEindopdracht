@@ -1,32 +1,48 @@
 package drankspel.game;
 
-
-import drankspel.interfaces.ClientInterface;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Scanner;
+import java.util.*;
 
 public class Game {
 
     private ArrayList<Card> cards;
-    private ArrayList<ClientInterface> player;
     private int playerNumber = 1;
 
     public Game() {
 
         cards = new ArrayList<>();
-        player = new ArrayList<>();
-        //player.addAll(clients);
-
 
         Stack stack = new Stack(1);
         cards = stack.getCards();
         System.out.println(stack.toString());
         System.out.println("amount of cards: " + cards.size());
-        //playGame();
 
+        for (Card c : cards){
+            //System.out.println("");
+            System.out.print(c.getNumber() + ", ");
+        }
+        System.out.println("");
 
+        Collections.sort(cards);
+        for (Card c : cards){
+            //System.out.println("");
+            System.out.print(c.getNumber() + ", ");
+        }
+        System.out.println("");
+
+        for(Card c : cards){
+            //System.out.println("");
+            System.out.print(c.getType() + ", ");
+        }
+        System.out.println("");
+
+        Collections.sort(cards, Card.cardComparator);
+        for(Card c : cards){
+            //System.out.println("");
+            System.out.print(c.getType() + ", ");
+        }
+        System.out.println("");
+        shuffleCards();
+        System.out.println(cards.toString());
     }
 
     public boolean gameStillGoing(){
@@ -43,16 +59,6 @@ public class Game {
     }
 
     /**
-     * select next player to get cards
-     */
-    public void selectNextPlayer(){
-        if(playerNumber == player.size()-1)
-            playerNumber = 0;
-        else
-            playerNumber++;
-    }
-
-    /**
      * selects the first five cards in the stack
      * @return a arraylist of the five cards to display in the interface
      */
@@ -65,6 +71,7 @@ public class Game {
             }
         }
         return fiveCards;
+
     }
 
     /**
@@ -90,11 +97,8 @@ public class Game {
         this.cards = cards;
     }
 
-    public ArrayList<ClientInterface> getPlayer() {
-        return player;
+    public static void main(String[] args) {
+        Game game = new Game();
     }
 
-    public void setPlayer(ArrayList<ClientInterface> player) {
-        this.player = player;
-    }
 }

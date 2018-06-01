@@ -1,8 +1,9 @@
 package drankspel.game;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
-public class Card implements Serializable{
+public class Card implements Serializable, Comparable<Card>{
     int number;
     String type;
     String rule;
@@ -45,4 +46,20 @@ public class Card implements Serializable{
                 ", rule='" + rule + '\'' +
                 '}';
     }
-}
+
+    @Override
+    public int compareTo(Card o) {
+        int compareNumber = o.getNumber();
+        return this.getNumber()-compareNumber;
+    }
+
+    public static Comparator<Card> cardComparator = new Comparator<Card>() {
+        @Override
+        public int compare(Card o1, Card o2) {
+            String type1 = o1.getType().toUpperCase();
+            String type2 = o2.getType().toUpperCase();
+            return type1.compareTo(type2);
+        }
+    };
+
+    }
