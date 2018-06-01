@@ -1,14 +1,14 @@
 package sockets;
 
+import drankspel.game.Card;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * A simple Swing-based client for the capitalization server.
@@ -26,6 +26,7 @@ public class Client {
     private String ready;
     private JTextField dataField = new JTextField(40);
     private static JTextArea messageArea = new JTextArea(8, 60);
+    private ArrayList<Card> cards = new ArrayList<>();
 
     /**
      * Constructs the client by laying out the GUI and registering a
@@ -96,7 +97,7 @@ public class Client {
         }
     }
 
-    public void connectToServer() throws IOException {
+    public void connectToServer() throws IOException, ClassNotFoundException {
 
         // Get the server address from a dialog box.
         String serverAddress = JOptionPane.showInputDialog(
@@ -114,33 +115,45 @@ public class Client {
 
         // Make connection and initialize streams
         Socket socket = new Socket(serverAddress, 9898);
-        in = new BufferedReader(
-                new InputStreamReader(socket.getInputStream()));
-        out = new PrintWriter(socket.getOutputStream(), true);
+//        in = new BufferedReader(
+//                new InputStreamReader(socket.getInputStream()));
+//        out = new PrintWriter(socket.getOutputStream(), true);
 
-        while(true){
-            String line = in.readLine();
-            if (line.startsWith("SUBMITNAME")) {
-                out.println(name);
-            } else if (line.startsWith("NAMEACCEPTED")) {
-                dataField.setEditable(true);
-            } else if (line.startsWith("READY")){
-                out.println(ready);
-            } else if (line.startsWith("MESSAGE")) {
-                messageArea.append(line.substring(8) + "\n");
+        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+
+        while(true) {
+
+            try {
+                synchronized (this) {
+                    Object input = (Object) in.readObject();
+
+                    if (input.getClass().equals(String.class)) {
+                        if (input.equals("you joined")) {
+                            messageArea.append(input + " the game" + "\n");
+                            out.writeObject("ready");
+                        } else {
+                            messageArea.append(input.toString() + "\n");
+                        }
+                    } else {
+                        System.out.println("cards received");
+                        cards = (ArrayList<Card>) input;
+                        System.out.println(cards.toString());
+
+                        messageArea.append(cards.get(0).toString() + "\n");
+                        ArrayList<Card> card = new ArrayList<>();
+                        card.add(cards.get(0));
+                        System.out.println(card.size());
+                        out.writeObject(card);
+                        System.out.println("card send");
+
+                    }
+                }
+            } catch (EOFException e) {
+
             }
         }
-
-        // Consume the initial welcoming messages from the server
-        //for (int i = 0; i < 3; i++) {
-        //    messageArea.append(in.readLine() + "\n");
-        //}
     }
-
-    //public static void update() throws IOException {
-    //    String message = in.readLine();
-    //    messageArea.append(message + "\n");
-    //}
 
     /**
      * Runs the client application.

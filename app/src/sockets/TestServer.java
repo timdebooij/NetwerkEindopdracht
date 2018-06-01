@@ -1,9 +1,6 @@
 package sockets;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -18,6 +15,9 @@ public class TestServer {
     private static HashSet<String> names = new HashSet<String>();
     private static HashSet<PrintWriter> writers = new HashSet<PrintWriter>();
     private static HashSet<Boolean> readies = new HashSet<Boolean>();
+
+    private ArrayList<ObjectOutputStream> outputStreams = new ArrayList<>();
+    private ArrayList<ObjectInputStream> inputStreams = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
         System.out.println("The game server is running...");
@@ -42,9 +42,8 @@ public class TestServer {
             this.socket = socket;
         }
 
-        public static boolean areAllTrue(boolean[] array)
-        {
-            for(boolean b : array) if(!b) return false;
+        public static boolean areAllTrue(boolean[] array) {
+            for (boolean b : array) if (!b) return false;
             return true;
         }
 
@@ -80,29 +79,30 @@ public class TestServer {
 
                 String timeStamp = new SimpleDateFormat("HH:mm").format(Calendar.getInstance().getTime());
 
-                for (PrintWriter writer : writers){
+                for (PrintWriter writer : writers) {
                     writer.println("MESSAGE " + timeStamp + " > " + name + " just joined! ");
                 }
 
                 while (true) {
                     out.println("READY");
                     String input = in.readLine();
-                    if (input == null) {
-                        return;
-                    }
-                    if (input == "ready" && !readies.contains(ready)){
-                        ready = true;
-                        for (PrintWriter writer : writers){
-                            writer.println("MESSAGE " + timeStamp + " > " + name + " is ready! " );
-                        }
-
-                    }
+//                    if (input == null) {
+//                        return;
+//                    }
+//                    if (input == "ready" && !readies.contains(ready)){
+//                        ready = true;
+//                        for (PrintWriter writer : writers){
+//                            writer.println("MESSAGE " + timeStamp + " > " + name + " is ready! " );
+//                        }
+//
+//                    }
                     for (PrintWriter writer : writers) {
                         writer.println("MESSAGE " + timeStamp + " - " + name + ": " + input);
                     }
+                    //}
                 }
             } catch (IOException e) {
-                System.out.println(e);
+                e.printStackTrace();
             }
         }
     }

@@ -1,6 +1,8 @@
 package drankspel.game;
 
-public class Card {
+import java.io.Serializable;
+
+public class Card implements Serializable{
     int number;
     String type;
     String rule;

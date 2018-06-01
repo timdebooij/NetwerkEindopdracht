@@ -1,9 +1,9 @@
 package sockets;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import drankspel.game.Card;
+import drankspel.game.Game;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Iterator;
 
 /**
  * A server program which accepts requests from clients to
@@ -32,6 +33,13 @@ public class Server {
 
     private static ArrayList<PrintWriter> writers = new ArrayList<>();
     private static ArrayList<Capitalizer> caps = new ArrayList<>();
+
+    private static ArrayList<ObjectOutputStream> outputStreams = new ArrayList<>();
+    private static ArrayList<ObjectInputStream> inputStreams = new ArrayList<>();
+    private static int playersJoined = 0;
+    private static int selectedPlayer = 0;
+    private static Game game;
+    private static ArrayList<Card> currentCards = new ArrayList<>();
     /**
      * Application method to run the server runs in an infinite loop
      * listening on port 9898.  When a connection is requested, it
@@ -48,32 +56,55 @@ public class Server {
             while (true) {
                 Capitalizer cap = new Capitalizer(listener.accept(), clientNumber++);
                 cap.start();
-                caps.add(cap);
+                //caps.add(cap);
                 System.out.println(caps.size());
+                if(playersJoined == 2){
+                    break;
+                }
             }
         } finally {
             listener.close();
         }
+        game = new Game();
+        System.out.println(outputStreams.size());
+        outputStreams.get(selectedPlayer).writeObject(getCards());
+        nextPlayer();
+        System.out.println(selectedPlayer);
+        System.out.println(game.gameStillGoing());
     }
 
-    public static void sendMessages(String message){
-        for(Capitalizer cap : caps){
-            cap.print(message);
 
+    public static void nextPlayer(){
+        if(selectedPlayer <= 1)
+            selectedPlayer++;
+        else
+            selectedPlayer = 0;
+    }
+
+    public static ArrayList<Card> getCards(){
+        System.out.println(game.getCards().size());
+        ArrayList<Card> newCards = game.selectFiveCards();
+        currentCards = newCards;
+        return newCards;
+    }
+
+    public static void sendNewCards() throws IOException {
+        if(game.gameStillGoing()) {
+            outputStreams.get(selectedPlayer).writeObject(getCards());
+        }
+        else{
+            System.out.println("game finished");
         }
     }
 
-    public static void addWriter(PrintWriter writer){
-        writers.add(writer);
+    public static void sendMessages(String message) throws IOException {
+        for(int i = 0; i <= outputStreams.size()-1; i++){
+            if(!(i==selectedPlayer))
+                System.out.println("message send");
+            outputStreams.get(i).writeObject(message);
+        }
     }
 
-    public ArrayList<PrintWriter> getWriters() {
-        return writers;
-    }
-
-    public void setWriters(ArrayList<PrintWriter> writers) {
-        this.writers = writers;
-    }
 
     /**
      * A private thread to handle capitalization requests on a particular
@@ -99,42 +130,71 @@ public class Server {
         public void run() {
             try {
 
-                // Decorate the streams so we can send characters
-                // and not just bytes.  Ensure output is flushed
-                // after every newline.
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(socket.getInputStream()));
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
-                out = new PrintWriter(socket.getOutputStream(), true);
-                addWriter(out);
+                outputStreams.add(out);
+                inputStreams.add(in);
 
-                // Send a welcome message to the client.
-                out.println("Hello, you are client #" + clientNumber + ".");
-                out.println("Enter a line with only a period to quit\n");
+                out.writeObject("you joined");
 
                 // Get messages from the client, line by line; return them
                 // capitalized
-                while (true) {
-                    String input = in.readLine();
-                    if (input == null || input.equals(".")) {
-                        break;
-                    }
-                    String line = input.toUpperCase();
 
-                    for(Capitalizer cap : caps){
-                        cap.print(line);
+                while (true) {
+                    synchronized (this) {
+                        Object input = in.readObject();
+                        if (input.getClass().equals(String.class)) {
+                            if (input.equals("ready")) {
+                                System.out.println("player ready");
+                                playersJoined++;
+                            } else {
+                                sendMessages(input.toString());
+                            }
+                        } else {
+                            //System.out.println("cards entered");
+                            ArrayList<Card> card = (ArrayList<Card>) input;
+                            //System.out.println("rule " + card.get(0).getRule());
+                            //System.out.println("amount: " + card.size());
+                            sendMessages(card.get(0).getRule());
+                            int number = card.get(0).getNumber();
+                            String type = card.get(0).getType();
+                            Iterator it = currentCards.iterator();
+                            while(it.hasNext()){
+                                Card c = (Card) it.next();
+                                if(c.getNumber() == number){
+                                    if(c.getType().equals(type)){
+                                        it.remove();
+                                        //System.out.println("removed card");
+                                    }
+                                }
+                            }
+                            game.returnFourCards(currentCards);
+                            //System.out.println("returned cards");
+                            nextPlayer();
+                            sendNewCards();
+                            System.out.println("new cards send");
+                        }
+
+                        if (input == null || input.equals(".")) {
+                            break;
+                        }
+
                     }
+                    }
+                } catch(IOException e){
+                    log("Error handling client# " + clientNumber + ": " + e);
+                } catch(ClassNotFoundException e){
+                    e.printStackTrace();
+                } finally{
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        log("Couldn't close a socket, what's going on?");
+                    }
+                    log("Connection with client# " + clientNumber + " closed");
                 }
-            } catch (IOException e) {
-                log("Error handling client# " + clientNumber + ": " + e);
-            } finally {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    log("Couldn't close a socket, what's going on?");
-                }
-                log("Connection with client# " + clientNumber + " closed");
-            }
+
         }
 
         /**

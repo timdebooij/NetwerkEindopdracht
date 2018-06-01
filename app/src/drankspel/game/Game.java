@@ -13,42 +13,33 @@ public class Game {
     private ArrayList<ClientInterface> player;
     private int playerNumber = 1;
 
-    public Game(ArrayList<ClientInterface> clients) {
+    public Game() {
 
         cards = new ArrayList<>();
         player = new ArrayList<>();
-        player.addAll(clients);
+        //player.addAll(clients);
 
 
         Stack stack = new Stack(1);
         cards = stack.getCards();
         System.out.println(stack.toString());
         System.out.println("amount of cards: " + cards.size());
-        playGame();
+        //playGame();
 
 
     }
 
+    public boolean gameStillGoing(){
+        if(cards.isEmpty())
+            return false;
+        else
+            return true;
+    }
 
-    /**
-     * the main method of the game
-     * all game logic will be in this method
-     */
-    public void playGame(){
-
-        while(!cards.isEmpty()){
-            //sent cards to selected player
-            ArrayList<Card> sentCards = selectFiveCards();
-            player.get(playerNumber).setCards(sentCards);
-            //System.out.println(sentCards);
-
-            //get four back
-            returnFourCards(player.get(playerNumber).chooseCard());
-            //go to next player
-            selectNextPlayer();
-
-        }
-
+    public void removeCard(Card card){
+        System.out.println("amount of cards before: " + cards.size());
+        cards.remove(card);
+        System.out.println("amount of cards after: " + cards.size());
     }
 
     /**
