@@ -3,6 +3,7 @@ package sockets;
 import drankspel.game.Card;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -12,14 +13,14 @@ import java.util.ArrayList;
 public class Client {
 
     private static int cardSelected;
-    private static BufferedReader in;
-    private PrintWriter out;
+   // private static BufferedReader in;
+    //private PrintWriter out;
     private JFrame frame = new JFrame("Game Client");
     private JPanel panel = new JPanel();
     private JTextField dataField = new JTextField(40);
     private static JTextArea messageArea = new JTextArea(8, 60);
-    private ArrayList<Card> cards = new ArrayList<>();
-    private ArrayList<JButton> buttons = new ArrayList<>();
+    private static ArrayList<Card> cards = new ArrayList<>();
+    private static ArrayList<JButton> buttons = new ArrayList<>();
     private static boolean active = false;
     private static JButton test;
     private static JButton button1 = new JButton();
@@ -27,6 +28,8 @@ public class Client {
     private static JButton button3 = new JButton();
     private static JButton button4 = new JButton();
     private static JButton button5 = new JButton();
+    private static ObjectOutputStream out;
+    private static ObjectInputStream in;
     private static int index1;
 
     public static boolean isButtonPressed() {
@@ -55,16 +58,54 @@ public class Client {
         frame.getContentPane().add(panel, "South");
         panel.repaint();
         frame.repaint();
-        button1.addActionListener(e -> {index1 = 0; setButtonPressed(true); System.out.println("klik!");});
+
+        button1.addActionListener(e -> {int index = 0;
+            try {
+                playCard(index);
+                removeCards(buttons, cards);
+                //dealCards(buttons, cards);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            System.out.println("klik!");});
         buttons.add(button1);
-        button2.addActionListener(e -> {index1 = 1; setButtonPressed(true); System.out.println("klik!");});
+
+        button2.addActionListener(e -> {int index = 1;  try {
+            playCard(index);
+            removeCards(buttons, cards);
+            //dealCards(buttons, cards);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }System.out.println("klik!");});
         buttons.add(button2);
-        button3.addActionListener(e -> {index1 = 2; setButtonPressed(true); System.out.println("klik!");});
+
+        button3.addActionListener(e -> {int index = 2;  try {
+            playCard(index);
+            removeCards(buttons, cards);
+            //dealCards(buttons, cards);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }System.out.println("klik!");});
         buttons.add(button3);
-        button4.addActionListener(e -> {index1 = 3; setButtonPressed(true); System.out.println("klik!");});
+
+        button4.addActionListener(e -> {int index = 3;  try {
+            playCard(index);
+            removeCards(buttons, cards);
+            //dealCards(buttons, cards);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }System.out.println("klik!");});
         buttons.add(button4);
-        button5.addActionListener(e -> {index1 = 4; setButtonPressed(true); System.out.println("klik!");});
+
+        button5.addActionListener(e -> {int index = 4;  try {
+            playCard(index);
+            removeCards(buttons, cards);
+            //dealCards(buttons, cards);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }System.out.println("klik!");});
         buttons.add(button5);
+
         buttonPressed = false;
 
         //panel.add(button1);
@@ -81,8 +122,8 @@ public class Client {
         // Add Listeners
         dataField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                out.println(dataField.getText());
-                dataField.setText("");
+                //out.println(dataField.getText());
+                //dataField.setText("");
             }
         });
     }
@@ -98,10 +139,20 @@ public class Client {
         }
         frame.repaint();
         panel.repaint();
+        frame.repaint();
+        frame.validate();
+        frame.revalidate();
+        panel.repaint();
+        panel.validate();
+        panel.revalidate();
     }
 
-    public void playCard(ArrayList<Card> cards){
-
+    public void playCard(int index) throws IOException {
+        ArrayList<Card> card = new ArrayList<>();
+        card.add(cards.get(index));
+        System.out.println(card.size());
+        out.writeObject(card);
+        System.out.println("card send");
     }
 
     public void removeCards(ArrayList<JButton> buttons, ArrayList<Card> cards){
@@ -111,6 +162,8 @@ public class Client {
             panel.remove(buttons.get(index));
         }
         panel.repaint();
+        //out.println();
+
     }
 
     public void connectToServer() throws IOException, ClassNotFoundException {
@@ -135,8 +188,8 @@ public class Client {
 //                new InputStreamReader(socket.getInputStream()));
 //        out = new PrintWriter(socket.getOutputStream(), true);
 
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+        out = new ObjectOutputStream(socket.getOutputStream());
+        in = new ObjectInputStream(socket.getInputStream());
 
         while(true) {
 
@@ -154,17 +207,18 @@ public class Client {
                     } else {
                         System.out.println("cards received");
                         cards = (ArrayList<Card>) input;
-                        //System.out.println(cards.toString());
                         dealCards(buttons, cards);
+                        //System.out.println(cards.toString());
+                        //dealCards(buttons, cards);
                         //messageArea.append(cards.get(0).toString() + "\n");
-                        ArrayList<Card> card = new ArrayList<>();
+                        //ArrayList<Card> card = new ArrayList<>();
 
-                        if (buttonPressed){
-                            card.add(cards.get(index1));
-                            System.out.println(card.size());
-                            out.writeObject(card);
-                            System.out.println("card send");
-                        }
+                        //card.add(cards.get(index1));
+                        //System.out.println(card.size());
+                        //out.writeObject(card);
+                        //System.out.println("card send");
+                        //setButtonPressed(false);
+
 
 
                         //card.add(cards.get(0));
@@ -195,11 +249,14 @@ public class Client {
      */
     public static void main(String[] args) throws Exception {
         Client client = new Client();
-        client.setButtonPressed(false);
+        //client.setButtonPressed(false);
         client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         client.frame.setVisible(true);
         client.frame.setResizable(false);
         //client.frame.pack();
         client.connectToServer();
+        System.out.println("received cards");
+        //client.dealCards(buttons, cards);
+        //System.out.println("made buttons");
     }
 }
