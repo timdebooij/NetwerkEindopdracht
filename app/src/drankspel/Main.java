@@ -16,7 +16,7 @@ public class Main {
         clients.add(client);
         clients.add(client2);
         clients.add(client3);
-        Game game = new Game();
+        Game game = new Game(2);
 
     }
 }
