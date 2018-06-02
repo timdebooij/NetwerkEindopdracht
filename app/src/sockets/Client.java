@@ -150,6 +150,7 @@ public class Client {
     public void playCard(int index) throws IOException {
         ArrayList<Card> card = new ArrayList<>();
         card.add(cards.get(index));
+        messageArea.append(cards.get(index).getRule() + "\n");
         System.out.println(card.size());
         out.writeObject(card);
         System.out.println("card send");

@@ -7,21 +7,22 @@ public class Game {
     private ArrayList<Card> cards;
     private int playerNumber = 1;
 
-    public Game() {
+    public Game(int amount) {
 
         cards = new ArrayList<>();
 
-        Stack stack = new Stack(1);
+        Stack stack = new Stack(amount);
         cards = stack.getCards();
         System.out.println(stack.toString());
         System.out.println("amount of cards: " + cards.size());
-
+        System.out.println("cardnumbers before sorting by comparable: ");
         for (Card c : cards){
             //System.out.println("");
             System.out.print(c.getNumber() + ", ");
         }
         System.out.println("");
 
+        System.out.println("cardnumbers after sorting by comparable: ");
         Collections.sort(cards);
         for (Card c : cards){
             //System.out.println("");
@@ -29,12 +30,14 @@ public class Game {
         }
         System.out.println("");
 
+        System.out.println("cardtypes before sorting by comparator: ");
         for(Card c : cards){
             //System.out.println("");
             System.out.print(c.getType() + ", ");
         }
         System.out.println("");
 
+        System.out.println("cartypes after sorting by comparator: ");
         Collections.sort(cards, Card.cardComparator);
         for(Card c : cards){
             //System.out.println("");
@@ -98,7 +101,7 @@ public class Game {
     }
 
     public static void main(String[] args) {
-        Game game = new Game();
+        Game game = new Game(1);
     }
 
 }

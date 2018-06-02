@@ -61,10 +61,10 @@ public class Server {
         } finally {
             listener.close();
         }
-        game = new Game();
+        game = new Game(1);
         System.out.println(outputStreams.size());
         outputStreams.get(selectedPlayer).writeObject(getCards());
-        nextPlayer();
+        //nextPlayer();
         System.out.println(selectedPlayer);
         System.out.println(game.gameStillGoing());
     }
