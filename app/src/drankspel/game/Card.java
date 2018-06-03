@@ -8,10 +8,17 @@ public class Card implements Serializable, Comparable<Card>{
     String type;
     String rule;
 
-    public Card(int number, String type, String rule) {
+
+
+
+
+    String image;
+
+    public Card(int number, String type, String rule, String image) {
         this.number = number;
         this.type = type;
         this.rule = rule;
+        this.image = image;
     }
 
     public int getNumber() {
@@ -37,6 +44,10 @@ public class Card implements Serializable, Comparable<Card>{
     public void setRule(String rule) {
         this.rule = rule;
     }
+
+    public void setImage(String image) { this.image = image; }
+
+    public String getImage() { return image; }
 
     @Override
     public String toString() {

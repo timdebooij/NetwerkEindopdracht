@@ -30,8 +30,8 @@ public class Client {
     private Client(){
 
         // Layout GUI
-        frame.setSize(700 , 250);
-        panel.setSize(700 , 30);
+        frame.setSize(600 , 315);
+        panel.setSize(600 , 150);
         messageArea.setEditable(false);
         frame.getContentPane().add(new JScrollPane(messageArea), "North");
         frame.getContentPane().add(panel, "South");
@@ -91,8 +91,11 @@ public class Client {
         //adds amount of buttons equal to the amount of cards dealt to the players hand
         for(int index = 0; index < cards.size(); index++){
             buttons.get(index).setText(cards.get(index).getType() + cards.get(index).getNumber());
-            buttons.get(index).setPreferredSize(new Dimension(100, 25));
-            buttons.get(index).setToolTipText(cards.get(index).getRule());
+            cardSelected = index;
+            buttons.get(index).setPreferredSize(new Dimension(100, 145));
+            buttons.get(index).setToolTipText(cards.get(index).getType() + " " + cards.get(index).getNumber() + " " + cards.get(index).getRule());
+            //buttons.get(index).setIcon(new ImageIcon(cards.get(index).getImage()));
+            buttons.get(index).setIcon(new ImageIcon(((new ImageIcon(cards.get(index).getImage())).getImage()).getScaledInstance(100, 145, java.awt.Image.SCALE_SMOOTH)));
             panel.add(buttons.get(index));
         }
         frame.repaint();
