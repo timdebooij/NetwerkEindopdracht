@@ -135,6 +135,7 @@ public class Client {
             buttons.get(index).setText(cards.get(index).getType() + cards.get(index).getNumber());
             cardSelected = index;
             buttons.get(index).setPreferredSize(new Dimension(100, 25));
+            buttons.get(index).setToolTipText(cards.get(index).getRule());
             panel.add(buttons.get(index));
         }
         frame.repaint();
@@ -209,6 +210,7 @@ public class Client {
                         System.out.println("cards received");
                         cards = (ArrayList<Card>) input;
                         dealCards(buttons, cards);
+                        messageArea.append("It's your turn!" + "\n");
                         //System.out.println(cards.toString());
                         //dealCards(buttons, cards);
                         //messageArea.append(cards.get(0).toString() + "\n");
@@ -249,6 +251,9 @@ public class Client {
      * Runs the client application.
      */
     public static void main(String[] args) throws Exception {
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch(Exception ignored){}
         Client client = new Client();
         //client.setButtonPressed(false);
         client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashSet;
 import java.util.Iterator;
 
 /**
@@ -37,6 +38,7 @@ public class Server {
     private static int selectedPlayer = 0;
     private static Game game;
     private static ArrayList<Card> currentCards = new ArrayList<>();
+    private static HashSet<String> names = new HashSet<String>();
     /**
      * Application method to run the server runs in an infinite loop
      * listening on port 9898.  When a connection is requested, it
@@ -135,9 +137,6 @@ public class Server {
                 inputStreams.add(in);
 
                 out.writeObject("you joined");
-
-                // Get messages from the client, line by line; return them
-                // capitalized
 
                 while (true) {
                     synchronized (this) {
