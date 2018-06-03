@@ -71,14 +71,14 @@ public class Server {
     }
 
 
-    public static void nextPlayer(){
+    private static void nextPlayer(){
         if(selectedPlayer <= 1)
             selectedPlayer++;
         else
             selectedPlayer = 0;
     }
 
-    public static ArrayList<Card> getCards(){
+    private static ArrayList<Card> getCards(){
         game.shuffleCards();
         System.out.println(game.getCards().size());
         ArrayList<Card> newCards = game.selectFiveCards();
@@ -86,7 +86,7 @@ public class Server {
         return newCards;
     }
 
-    public static void sendNewCards() throws IOException {
+    private static void sendNewCards() throws IOException {
         if(game.gameStillGoing()) {
             outputStreams.get(selectedPlayer).writeObject(getCards());
             System.out.println("new cards send");
@@ -96,7 +96,7 @@ public class Server {
         }
     }
 
-    public static void sendMessages(String message) throws IOException {
+    private static void sendMessages(String message) throws IOException {
         for(int i = 0; i <= outputStreams.size()-1; i++){
             if(!(i==selectedPlayer))
                 //System.out.println("message send");
@@ -115,7 +115,7 @@ public class Server {
         private int clientNumber;
         private PrintWriter out;
 
-        public Player(Socket socket, int clientNumber) {
+        private Player(Socket socket, int clientNumber) {
             this.socket = socket;
             this.clientNumber = clientNumber;
             log("New connection with client# " + clientNumber + " at " + socket);
@@ -161,18 +161,12 @@ public class Server {
                                 if(c.getNumber() == number){
                                     if(c.getType().equals(type)){
                                         it.remove();
-                                        //System.out.println("removed card");
                                     }
                                 }
                             }
                             game.returnFourCards(currentCards);
-                            //System.out.println("returned cards");
                             nextPlayer();
                             sendNewCards();
-                        }
-
-                        if (input == null || input.equals(".")) {
-                            break;
                         }
 
                     }

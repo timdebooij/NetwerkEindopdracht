@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 public class Client {
 
-    private static int cardSelected;
     private JFrame frame = new JFrame("Game Client");
     private JPanel panel = new JPanel();
     private static JTextArea messageArea = new JTextArea(8, 60);
@@ -28,7 +27,7 @@ public class Client {
      * listener with the textfield so that pressing Enter in the
      * listener sends the textfield contents to the server.
      */
-    public Client(){
+    private Client(){
 
         // Layout GUI
         frame.setSize(700 , 250);
@@ -87,12 +86,11 @@ public class Client {
         buttons.add(button5);
     }
 
-    public void dealCards(ArrayList<JButton> buttons, ArrayList<Card> cards){
+    private void dealCards(ArrayList<JButton> buttons, ArrayList<Card> cards){
 
         //adds amount of buttons equal to the amount of cards dealt to the players hand
         for(int index = 0; index < cards.size(); index++){
             buttons.get(index).setText(cards.get(index).getType() + cards.get(index).getNumber());
-            cardSelected = index;
             buttons.get(index).setPreferredSize(new Dimension(100, 25));
             buttons.get(index).setToolTipText(cards.get(index).getRule());
             panel.add(buttons.get(index));
@@ -107,7 +105,7 @@ public class Client {
         panel.revalidate();
     }
 
-    public void playCard(int index) throws IOException {
+    private void playCard(int index) throws IOException {
         ArrayList<Card> card = new ArrayList<>();
         card.add(cards.get(index));
         messageArea.append("\n");
@@ -119,7 +117,7 @@ public class Client {
         System.out.println("card send");
     }
 
-    public void removeCards(ArrayList<JButton> buttons, ArrayList<Card> cards){
+    private void removeCards(ArrayList<JButton> buttons, ArrayList<Card> cards){
 
         //removes amount of buttons equal to the amount of cards dealt to the players hand
         for(int index = 0; index < cards.size(); index++){
@@ -130,7 +128,7 @@ public class Client {
 
     }
 
-    public void connectToServer() throws IOException, ClassNotFoundException {
+    private void connectToServer() throws IOException, ClassNotFoundException {
 
         // Get the server address from a dialog box.
         String serverAddress = JOptionPane.showInputDialog(
