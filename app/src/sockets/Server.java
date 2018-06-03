@@ -18,18 +18,6 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Iterator;
 
-/**
- * A server program which accepts requests from clients to
- * capitalize strings.  When clients connect, a new thread is
- * started to handle an interactive dialog in which the client
- * sends in a string and the server thread sends back the
- * capitalized version of the string.
- *
- * The program is runs in an infinite loop, so shutdown in platform
- * dependent.  If you ran it from a console window with the "java"
- * interpreter, Ctrl+C generally will shut it down.
- */
-
 public class Server {
 
     private static ArrayList<ObjectOutputStream> outputStreams = new ArrayList<>();
@@ -38,14 +26,7 @@ public class Server {
     private static int selectedPlayer = 0;
     private static Game game;
     private static ArrayList<Card> currentCards = new ArrayList<>();
-    /**
-     * Application method to run the server runs in an infinite loop
-     * listening on port 9898.  When a connection is requested, it
-     * spawns a new thread to do the servicing and immediately returns
-     * to listening.  The server keeps a unique client number for each
-     * client that connects just to show interesting logging
-     * messages.  It is certainly not necessary to do this.
-     */
+
     public static void main(String[] args) throws Exception {
         System.out.println("The Game server is running.");
         int clientNumber = 0;
@@ -104,12 +85,6 @@ public class Server {
         }
     }
 
-
-    /**
-     * A private thread to handle capitalization requests on a particular
-     * socket.  The client terminates the dialogue by sending a single line
-     * containing only a period.
-     */
     private static class Player extends Thread {
         private Socket socket;
         private int clientNumber;
@@ -121,11 +96,6 @@ public class Server {
             log("New connection with client# " + clientNumber + " at " + socket);
         }
 
-        /**
-         * Services this thread's client by first sending the
-         * client a welcome message then repeatedly reading strings
-         * and sending back the capitalized version of the string.
-         */
         public void run() {
             try {
 
@@ -148,10 +118,7 @@ public class Server {
                                 sendMessages(input.toString());
                             }
                         } else {
-                            //System.out.println("cards entered");
                             ArrayList<Card> card = (ArrayList<Card>) input;
-                            //System.out.println("rule " + card.get(0).getRule());
-                            //System.out.println("amount: " + card.size());
                             sendMessages(card.get(0).getRule());
                             int number = card.get(0).getNumber();
                             String type = card.get(0).getType();
@@ -186,16 +153,9 @@ public class Server {
 
         }
 
-        /**
-         * Logs a simple message.  In this case we just write the
-         * message to the server applications standard output.
-         */
         private void log(String message) {
             System.out.println(message);
         }
 
-        private void print(String message){
-            out.println(message);
-        }
     }
 }

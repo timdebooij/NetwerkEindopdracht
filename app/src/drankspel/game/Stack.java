@@ -83,32 +83,6 @@ public class Stack {
         images.add("res/10_of_diamonds.png");
     }
 
-    public void createHalfStack(){
-        //createCards(1);
-        createCard(26);
-    }
-
-    public void createStack(){
-        createCard(52);
-    }
-
-    public void createDoubleStack() {
-        createCard(104);
-    }
-
-    /**
-     * creates cards for in the deck
-     * @param size is the size of the deck (between 0 and 3)
-     */
-    public void createCards(int size){
-        for(int i = 2; i<=14; i++){
-            String rule = rules.get(i-2);
-            for(int t = 0; t<=size; t++){
-                String type = types.get(t);
-                cards.add(new drankspel.game.Card(i, type, rule));
-            }
-        }
-    }
 
     int number = 2;
     int typeCard = 0;

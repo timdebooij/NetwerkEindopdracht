@@ -22,11 +22,6 @@ public class Client {
     private static JButton button5 = new JButton();
     private static ObjectOutputStream out;
 
-    /**
-     * Constructs the client by laying out the GUI and registering a
-     * listener with the textfield so that pressing Enter in the
-     * listener sends the textfield contents to the server.
-     */
     private Client(){
 
         // Layout GUI
@@ -91,8 +86,7 @@ public class Client {
         //adds amount of buttons equal to the amount of cards dealt to the players hand
         for(int index = 0; index < cards.size(); index++){
             buttons.get(index).setText(cards.get(index).getType() + cards.get(index).getNumber());
-            cardSelected = index;
-            buttons.get(index).setPreferredSize(new Dimension(100, 145));
+            buttons.get(index).setPreferredSize(new Dimension(  100, 145));
             buttons.get(index).setToolTipText(cards.get(index).getType() + " " + cards.get(index).getNumber() + " " + cards.get(index).getRule());
             //buttons.get(index).setIcon(new ImageIcon(cards.get(index).getImage()));
             buttons.get(index).setIcon(new ImageIcon(((new ImageIcon(cards.get(index).getImage())).getImage()).getScaledInstance(100, 145, java.awt.Image.SCALE_SMOOTH)));
@@ -197,7 +191,7 @@ public class Client {
      */
     public static void main(String[] args) throws Exception {
         try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+            UIManager.getSystemLookAndFeelClassName();
         } catch(Exception ignored){}
         Client client = new Client();
         //client.setButtonPressed(false);
@@ -208,4 +202,5 @@ public class Client {
         client.connectToServer();
         System.out.println("received cards");
     }
+
 }
