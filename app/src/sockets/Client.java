@@ -4,8 +4,6 @@ import drankspel.game.Card;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -13,34 +11,17 @@ import java.util.ArrayList;
 public class Client {
 
     private static int cardSelected;
-   // private static BufferedReader in;
-    //private PrintWriter out;
     private JFrame frame = new JFrame("Game Client");
     private JPanel panel = new JPanel();
-    private JTextField dataField = new JTextField(40);
     private static JTextArea messageArea = new JTextArea(8, 60);
     private static ArrayList<Card> cards = new ArrayList<>();
     private static ArrayList<JButton> buttons = new ArrayList<>();
-    private static boolean active = false;
-    private static JButton test;
     private static JButton button1 = new JButton();
     private static JButton button2 = new JButton();
     private static JButton button3 = new JButton();
     private static JButton button4 = new JButton();
     private static JButton button5 = new JButton();
     private static ObjectOutputStream out;
-    private static ObjectInputStream in;
-    private static int index1;
-
-    public static boolean isButtonPressed() {
-        return buttonPressed;
-    }
-
-    public static void setButtonPressed(boolean buttonPressed) {
-        Client.buttonPressed = buttonPressed;
-    }
-
-    private static boolean buttonPressed;
 
     /**
      * Constructs the client by laying out the GUI and registering a
@@ -53,7 +34,6 @@ public class Client {
         frame.setSize(700 , 250);
         panel.setSize(700 , 30);
         messageArea.setEditable(false);
-        //frame.getContentPane().add(dataField, "Center");
         frame.getContentPane().add(new JScrollPane(messageArea), "North");
         frame.getContentPane().add(panel, "South");
         panel.repaint();
@@ -105,27 +85,6 @@ public class Client {
             e1.printStackTrace();
         }System.out.println("klik!");});
         buttons.add(button5);
-
-        buttonPressed = false;
-
-        //panel.add(button1);
-        //button1.setPreferredSize(new Dimension(100,25));
-        //panel.add(button2);
-        //button2.setPreferredSize(new Dimension(100,25));
-        //panel.add(button3);
-        //button3.setPreferredSize(new Dimension(100,25));
-        //panel.add(button4);
-        //button4.setPreferredSize(new Dimension(100,25));
-        //panel.add(button5);
-        //button5.setPreferredSize(new Dimension(100,25));
-
-        // Add Listeners
-        dataField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                //out.println(dataField.getText());
-                //dataField.setText("");
-            }
-        });
     }
 
     public void dealCards(ArrayList<JButton> buttons, ArrayList<Card> cards){
@@ -151,7 +110,10 @@ public class Client {
     public void playCard(int index) throws IOException {
         ArrayList<Card> card = new ArrayList<>();
         card.add(cards.get(index));
+        messageArea.append("\n");
+        messageArea.append("You have to complete the challenge: \n");
         messageArea.append(cards.get(index).getRule() + "\n");
+        messageArea.setCaretPosition(messageArea.getDocument().getLength());
         System.out.println(card.size());
         out.writeObject(card);
         System.out.println("card send");
@@ -178,20 +140,17 @@ public class Client {
                 JOptionPane.QUESTION_MESSAGE);
 
         // Get the user to input username from a dialog box.
-        String  name = JOptionPane.showInputDialog(
+        String name = JOptionPane.showInputDialog(
                 frame,
                 "Choose a screen name:",
                 "Screen name selection",
                 JOptionPane.PLAIN_MESSAGE);
-
+        frame.setTitle(name);
         // Make connection and initialize streams
         Socket socket = new Socket(serverAddress, 9898);
-//        in = new BufferedReader(
-//                new InputStreamReader(socket.getInputStream()));
-//        out = new PrintWriter(socket.getOutputStream(), true);
 
         out = new ObjectOutputStream(socket.getOutputStream());
-        in = new ObjectInputStream(socket.getInputStream());
+        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
         while(true) {
 
@@ -201,30 +160,20 @@ public class Client {
 
                     if (input.getClass().equals(String.class)) {
                         if (input.equals("you joined")) {
-                            messageArea.append(input + " the game" + "\n");
+                            messageArea.append(input + " the game, please wait for the game to start" + "\n");
                             out.writeObject("ready");
                         } else {
+                            messageArea.append("\n");
+                            messageArea.append("Someone else has a challenge to complete:  \n");
                             messageArea.append(input.toString() + "\n");
+                            messageArea.setCaretPosition(messageArea.getDocument().getLength());
                         }
                     } else {
                         System.out.println("cards received");
                         cards = (ArrayList<Card>) input;
                         dealCards(buttons, cards);
-                        messageArea.append("It's your turn!" + "\n");
-                        //System.out.println(cards.toString());
-                        //dealCards(buttons, cards);
-                        //messageArea.append(cards.get(0).toString() + "\n");
-                        //ArrayList<Card> card = new ArrayList<>();
-
-                        //card.add(cards.get(index1));
-                        //System.out.println(card.size());
-                        //out.writeObject(card);
-                        //System.out.println("card send");
-                        //setButtonPressed(false);
-
-
-
-                        //card.add(cards.get(0));
+                        messageArea.append("You can select a new card" + "\n");
+                        messageArea.setCaretPosition(messageArea.getDocument().getLength());
 
                         frame.repaint();
                         frame.validate();
@@ -242,11 +191,6 @@ public class Client {
 
     }
 
-    //public static void update() throws IOException {
-    //    String message = in.readLine();
-    //    messageArea.append(message + "\n");
-    //}
-
     /**
      * Runs the client application.
      */
@@ -262,7 +206,5 @@ public class Client {
         //client.frame.pack();
         client.connectToServer();
         System.out.println("received cards");
-        //client.dealCards(buttons, cards);
-        //System.out.println("made buttons");
     }
 }

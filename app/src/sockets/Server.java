@@ -38,7 +38,6 @@ public class Server {
     private static int selectedPlayer = 0;
     private static Game game;
     private static ArrayList<Card> currentCards = new ArrayList<>();
-    private static HashSet<String> names = new HashSet<String>();
     /**
      * Application method to run the server runs in an infinite loop
      * listening on port 9898.  When a connection is requested, it
